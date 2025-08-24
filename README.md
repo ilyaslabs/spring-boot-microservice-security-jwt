@@ -38,8 +38,8 @@ This library provides a simple way to generate and validate JWT tokens using RSA
             security:
               jwt:
                 rsa:
-                  private-key: classpath:privateKey.pem
-                  public-key: classpath:publicKey.pem
+                  rsa-private-key: classpath:privateKey.pem
+                  rsa-public-key: classpath:publicKey.pem
     ```
    
    - Keys can be generated anywhere.

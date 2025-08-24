@@ -90,7 +90,7 @@ public class SecurityConfig {
      */
     @Bean
     public JwtDecoder jwtDecoder() {
-        return NimbusJwtDecoder.withPublicKey(rsaKeyProperties.getPublicKey()).build();
+        return NimbusJwtDecoder.withPublicKey(rsaKeyProperties.getRsaPublicKey()).build();
     }
 
     /**
@@ -100,7 +100,7 @@ public class SecurityConfig {
      */
     @Bean
     public JwtEncoder jwtEncoder() {
-        RSAKey rsaKey = new RSAKey.Builder(rsaKeyProperties.getPublicKey()).privateKey(rsaKeyProperties.getPrivateKey()).build();
+        RSAKey rsaKey = new RSAKey.Builder(rsaKeyProperties.getRsaPublicKey()).privateKey(rsaKeyProperties.getRsaPrivateKey()).build();
         ImmutableJWKSet<SecurityContext> securityContextImmutableJWKSet = new ImmutableJWKSet<>(new JWKSet(rsaKey));
         return new NimbusJwtEncoder(securityContextImmutableJWKSet);
     }
