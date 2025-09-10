@@ -1,4 +1,4 @@
-package io.github.ilyasdotdev.microservice.security.jwt;
+package io.github.ilyaslabs.microservice.security.jwt;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

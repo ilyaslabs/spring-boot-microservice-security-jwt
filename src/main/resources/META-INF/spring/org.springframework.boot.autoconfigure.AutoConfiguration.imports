@@ -1,3 +1,1 @@
-io.github.ilyasdotdev.microservice.security.jwt.SecurityConfig
-io.github.ilyasdotdev.microservice.security.jwt.Config
-io.github.ilyasdotdev.microservice.security.jwt.AuthService
+io.github.ilyaslabs.microservice.security.jwt.AutoConfig

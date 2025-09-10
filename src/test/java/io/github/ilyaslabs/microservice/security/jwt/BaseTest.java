@@ -1,4 +1,4 @@
-package io.github.ilyasdotdev.microservice.security.jwt;
+package io.github.ilyaslabs.microservice.security.jwt;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -30,7 +30,7 @@ public abstract class BaseTest {
 
         return authService.generateToken(
                 "testSubject",
-                "https://ilyasdotdev.github.io",
+                "https://ilyaslabs.github.io",
                 Map.of("k1", "v1", "k2", "v2"),
                 List.of("ADMIN", "USER")
         );

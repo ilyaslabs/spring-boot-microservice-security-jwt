@@ -1,4 +1,4 @@
-package io.github.ilyasdotdev.microservice.security.jwt;
+package io.github.ilyaslabs.microservice.security.jwt;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -35,6 +35,11 @@ class TestController {
     @GetMapping("/forbidden")
     public ResponseEntity<Void> forbiddenEndpoint() {
         return ResponseEntity.ok().build(); // HTTP 403 Forbidden
+    }
+
+    @GetMapping("/refresh")
+    public ResponseEntity<Void> refreshToken() {
+        return ResponseEntity.ok().build();
     }
 
 }

@@ -1,6 +1,6 @@
 io:
   github:
-    ilyasdotdev:
+    ilyaslabs:
       microservice:
         security:
           jwt:

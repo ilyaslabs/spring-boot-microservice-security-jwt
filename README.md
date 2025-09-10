@@ -17,7 +17,7 @@ This library provides a simple way to generate and validate JWT tokens using RSA
 2. Add the dependency in your project.
     ```xml
     <dependency>
-        <groupId>io.github.ilyasdotdev</groupId>
+        <groupId>io.github.ilyaslabs</groupId>
         <artifactId>spring-boot-microservice-security-jwt</artifactId>
         <version>1.0.0</version>
     </dependency>
@@ -33,7 +33,7 @@ This library provides a simple way to generate and validate JWT tokens using RSA
     ```yml
    io:
       github:
-        ilyasdotdev:
+        ilyaslabs:
           microservice:
             security:
               jwt:
@@ -73,7 +73,7 @@ By default, the token will be valid for 1 hour. You can change this by setting b
 ```yml
 io:
   github:
-    ilyasdotdev:
+    ilyaslabs:
       microservice:
         security:
           jwt:

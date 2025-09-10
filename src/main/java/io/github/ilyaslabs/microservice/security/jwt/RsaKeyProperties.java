@@ -1,4 +1,4 @@
-package io.github.ilyasdotdev.microservice.security.jwt;
+package io.github.ilyaslabs.microservice.security.jwt;
 
 import jakarta.annotation.PostConstruct;
 import lombok.Data;
@@ -16,7 +16,7 @@ import java.util.Base64;
  *
  * @author Muhammad Ilyas (m.ilyas@live.com)
  */
-@ConfigurationProperties(prefix = "io.github.ilyasdotdev.microservice.security.jwt.rsa")
+@ConfigurationProperties(prefix = "io.github.ilyaslabs.microservice.security.jwt.rsa")
 @Data
 public class RsaKeyProperties {
 
