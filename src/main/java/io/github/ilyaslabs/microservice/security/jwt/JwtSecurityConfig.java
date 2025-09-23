@@ -32,7 +32,7 @@ import static org.springframework.security.config.Customizer.withDefaults;
 @Configuration
 @EnableWebSecurity
 @RequiredArgsConstructor
-public class SecurityConfig {
+public class JwtSecurityConfig {
 
     private final RsaKeyProperties rsaKeyProperties;
 
