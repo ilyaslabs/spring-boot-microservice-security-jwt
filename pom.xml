@@ -25,6 +25,7 @@
         <maven-gpg-plugin.version>3.2.3</maven-gpg-plugin.version>
         <central-publishing-maven-plugin.version>0.8.0</central-publishing-maven-plugin.version>
         <ilyaslabs-spring-boot-microservice.version>2.0.0</ilyaslabs-spring-boot-microservice.version>
+        <ilyaslabs-spring-boot-microservice-security-jwt.version>2.0.0</ilyaslabs-spring-boot-microservice-security-jwt.version>
     </properties>
 
     <url>https://github.com/ilyaslabs/spring-boot-microservice-security-jwt</url>
@@ -49,6 +50,16 @@
 		<developerConnection>http://scm:git:git@github.com/ilyaslabs</developerConnection>
 		<url>scm:git:git://github.com/ilyaslabs/spring-boot-microservice-security-jwt</url>
 	</scm>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>io.github.ilyaslabs</groupId>
+                <artifactId>spring-boot-microservice-security-jwt</artifactId>
+                <version>${ilyaslabs-spring-boot-microservice-security-jwt.version}</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
 
 	<dependencies>
 		<dependency>
