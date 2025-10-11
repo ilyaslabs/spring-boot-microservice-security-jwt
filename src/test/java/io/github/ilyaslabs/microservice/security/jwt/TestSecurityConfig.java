@@ -16,6 +16,7 @@ class TestSecurityConfig {
         http
                 .authorizeHttpRequests(customizer ->
                         customizer.requestMatchers("/api/test/forbidden").denyAll()
+                                .requestMatchers("/api/test/unauthorized-scope").hasAuthority("SCOPE_USER")
                                 .anyRequest().authenticated()
                 );
 

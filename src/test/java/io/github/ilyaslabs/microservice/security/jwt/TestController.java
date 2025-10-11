@@ -42,4 +42,9 @@ class TestController {
         return ResponseEntity.ok().build();
     }
 
+    @GetMapping("/unauthorized-scope")
+    public ResponseEntity<Void> unauthorizedScope() {
+        return ResponseEntity.ok().build();
+    }
+
 }

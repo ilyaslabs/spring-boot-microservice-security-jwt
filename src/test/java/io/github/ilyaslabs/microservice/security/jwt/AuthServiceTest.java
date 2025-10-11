@@ -15,6 +15,7 @@ import java.util.List;
 import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.jwt;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -78,7 +79,7 @@ class AuthServiceTest extends BaseTest {
 
         assertThat(expiresAt.isEqual(expectedExpiryTime)).isTrue();
     }
-    
+
     @Test
     void testGenerateRefreshToken() throws Exception {
         var now = Instant.now();
@@ -141,6 +142,23 @@ class AuthServiceTest extends BaseTest {
         String token = generateTestToken();
         mockMvc.perform(get("/api/test/forbidden")
                         .header("Authorization", "Bearer " + token))
+                .andExpect(status().isForbidden());
+    }
+
+    @Test
+    void testUnauthenticatedEndpoint() throws Exception {
+        mockMvc.perform(
+                        get("/api/test/unauthorized-scope")
+                )
+                .andExpect(status().isUnauthorized());
+    }
+
+    @Test
+    void testForbiddenWhenNotAccess() throws Exception {
+
+        mockMvc
+                .perform(get("/api/test/unauthorized-scope")
+                        .with(jwt()))
                 .andExpect(status().isForbidden());
     }
 }

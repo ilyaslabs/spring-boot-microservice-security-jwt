@@ -4,16 +4,20 @@ import com.nimbusds.jose.jwk.JWKSet;
 import com.nimbusds.jose.jwk.RSAKey;
 import com.nimbusds.jose.jwk.source.ImmutableJWKSet;
 import com.nimbusds.jose.proc.SecurityContext;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.jwt.JwtDecoder;
@@ -21,6 +25,8 @@ import org.springframework.security.oauth2.jwt.JwtEncoder;
 import org.springframework.security.oauth2.jwt.NimbusJwtDecoder;
 import org.springframework.security.oauth2.jwt.NimbusJwtEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+
+import java.io.IOException;
 
 import static org.springframework.security.config.Customizer.withDefaults;
 
@@ -60,10 +66,22 @@ public class JwtSecurityConfig {
                 .oauth2ResourceServer(oauth -> oauth.jwt(withDefaults()))
                 .exceptionHandling(customizer ->
                         customizer
-                                .authenticationEntryPoint(new HttpAccessDeniedEntryPoint())
+                                .authenticationEntryPoint(this::unauthorizedResponse)
                 );
 
         return http;
+    }
+
+    /**
+     * Handles an unauthorized response by sending an HTTP 401 status code.
+     *
+     * @param httpServletRequest the HTTP servlet request triggering the unauthorized response
+     * @param response           the HTTP servlet response to send the error to
+     * @param e                  the authentication exception that caused the unauthorized response
+     * @throws IOException if an input or output error occurs while sending the error response
+     */
+    private void unauthorizedResponse(HttpServletRequest httpServletRequest, HttpServletResponse response, AuthenticationException e) throws IOException {
+        response.sendError(HttpStatus.UNAUTHORIZED.value(), HttpStatus.UNAUTHORIZED.getReasonPhrase());
     }
 
     @Bean(name = "defaultSecurityFilterChain")
