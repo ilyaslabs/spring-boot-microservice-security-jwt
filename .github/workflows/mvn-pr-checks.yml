@@ -1,0 +1,8 @@
+name: Pull Request Checks
+
+on:
+  pull_request:
+
+jobs:
+  call-pr-checks:
+    uses: ilyaslabs/cicd/.github/workflows/mvn-pr-checks.yml@main

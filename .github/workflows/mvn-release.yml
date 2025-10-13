@@ -1,0 +1,14 @@
+name: Call CI/CD Release Workflow
+
+on:
+  release:
+    types: [published]
+
+jobs:
+  release:
+    uses: ilyaslabs/cicd/.github/workflows/mvn-release.yml@main
+    secrets:
+      OSSRH_USERNAME: ${{ secrets.OSSRH_USERNAME }}
+      OSSRH_PASSWORD: ${{ secrets.OSSRH_PASSWORD }}
+      GPG_PRIVATE_KEY: ${{ secrets.GPG_PRIVATE_KEY }}
+      GPG_PASSPHRASE: ${{ secrets.GPG_PASSPHRASE }}
