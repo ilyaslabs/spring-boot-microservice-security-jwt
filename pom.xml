@@ -5,7 +5,7 @@
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>3.5.3</version>
+		<version>4.0.0</version>
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 
@@ -18,13 +18,13 @@
 	<packaging>jar</packaging>
 
     <properties>
-        <revision>0.0.1-SNAPSHOT</revision>
-        <java.version>21</java.version>
+        <revision>1.0-SNAPSHOT</revision>
+        <java.version>25</java.version>
         <maven-source-plugin.version>3.3.1</maven-source-plugin.version>
         <maven-javadoc-plugin.version>3.7.0</maven-javadoc-plugin.version>
         <maven-gpg-plugin.version>3.2.3</maven-gpg-plugin.version>
         <central-publishing-maven-plugin.version>0.8.0</central-publishing-maven-plugin.version>
-        <ilyaslabs-spring-boot-microservice.version>2.0.0</ilyaslabs-spring-boot-microservice.version>
+        <ilyaslabs-spring-boot-microservice.version>3.0.0</ilyaslabs-spring-boot-microservice.version>
     </properties>
 
     <url>https://github.com/ilyaslabs/spring-boot-microservice-security-jwt</url>
@@ -62,7 +62,7 @@
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-test</artifactId>
+			<artifactId>spring-boot-starter-webmvc-test</artifactId>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
