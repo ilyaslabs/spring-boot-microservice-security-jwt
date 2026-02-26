@@ -25,7 +25,7 @@ import java.util.Optional;
  */
 @Service
 @RequiredArgsConstructor
-public class AuthService {
+public class JwtTokenService {
 
     private final JwtEncoder encoder;
     private final JwtProperties jwtProperties;

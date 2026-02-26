@@ -19,7 +19,7 @@ public abstract class BaseTest {
     public MockMvc mockMvc;
 
     @Autowired
-    public AuthService authService;
+    public JwtTokenService jwtTokenService;
 
     /**
      * Generates a test token with predefined values.
@@ -28,7 +28,7 @@ public abstract class BaseTest {
      */
     public String generateTestToken() {
 
-        return authService.generateToken(
+        return jwtTokenService.generateToken(
                 "testSubject",
                 "https://ilyaslabs.github.io",
                 Map.of("k1", "v1", "k2", "v2"),

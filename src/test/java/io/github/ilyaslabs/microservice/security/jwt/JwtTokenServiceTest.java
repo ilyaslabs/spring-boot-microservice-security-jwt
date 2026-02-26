@@ -20,13 +20,13 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 /**
- * Test class for {@link AuthService}.
+ * Test class for {@link JwtTokenService}.
  *
  * @author ilyas
  */
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 @Import(TestFixedClockConfiguration.class)
-class AuthServiceTest extends BaseTest {
+class JwtTokenServiceTest extends BaseTest {
 
     @Autowired
     private JwtProperties jwtProperties;
@@ -37,7 +37,7 @@ class AuthServiceTest extends BaseTest {
     @Test
     void testGenerateToken() {
 
-        String token = authService.generateToken(
+        String token = jwtTokenService.generateToken(
                 "testSubject",
                 "testIssuer",
                 Map.of("k1", "v1", "k2", "v2"),
@@ -85,7 +85,7 @@ class AuthServiceTest extends BaseTest {
         var now = Instant.now();
         clock.set(now);
 
-        String token = authService.generateRefreshToken("test", "https://ilyaslabs.github.io", null, null);
+        String token = jwtTokenService.generateRefreshToken("test", "https://ilyaslabs.github.io", null, null);
 
         String responseString = mockMvc.perform(get("/api/test/context")
                         .header("Authorization", "Bearer " + token))
@@ -100,13 +100,13 @@ class AuthServiceTest extends BaseTest {
 
         Map<String, String> claims = (Map<String, String>) map.get("claims");
 
-        String scope = claims.get(AuthService.KEY_SCOPE_CLAIM);
+        String scope = claims.get(JwtTokenService.KEY_SCOPE_CLAIM);
 
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss'Z'");
         var expiresAt = LocalDateTime.parse(map.get("expiresAt").toString(), formatter);
         var expectedExpiryTime = now.plus(jwtProperties.getRefreshExpiry(), jwtProperties.getRefreshExpiryUnit()).atZone(ZoneOffset.UTC).toLocalDateTime().withNano(0);
 
-        assertThat(scope).isEqualTo(AuthService.SCOPE_REFRESH_TOKEN);
+        assertThat(scope).isEqualTo(JwtTokenService.SCOPE_REFRESH_TOKEN);
         assertThat(expiresAt.isEqual(expectedExpiryTime)).isTrue();
     }
 
@@ -115,7 +115,7 @@ class AuthServiceTest extends BaseTest {
         var now = Instant.now();
         clock.set(now);
 
-        String token = authService.generateRefreshToken("test", "https://ilyaslabs.github.io", null, List.of("USER"));
+        String token = jwtTokenService.generateRefreshToken("test", "https://ilyaslabs.github.io", null, List.of("USER"));
 
         String responseString = mockMvc.perform(get("/api/test/context")
                         .header("Authorization", "Bearer " + token))
@@ -129,9 +129,9 @@ class AuthServiceTest extends BaseTest {
         });
 
         Map<String, String> claims = (Map<String, String>) map.get("claims");
-        String scope = claims.get(AuthService.KEY_SCOPE_CLAIM);
+        String scope = claims.get(JwtTokenService.KEY_SCOPE_CLAIM);
 
-        assertThat(scope).contains(AuthService.SCOPE_REFRESH_TOKEN, "USER");
+        assertThat(scope).contains(JwtTokenService.SCOPE_REFRESH_TOKEN, "USER");
     }
 
     @Test

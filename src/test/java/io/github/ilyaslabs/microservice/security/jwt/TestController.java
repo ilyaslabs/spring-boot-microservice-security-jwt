@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 class TestController {
 
-    private final AuthService authService;
+    private final JwtTokenService jwtTokenService;
 
     /**
      * Endpoint to test success response
@@ -29,7 +29,7 @@ class TestController {
 
     @GetMapping("/context")
     public Jwt getContext() {
-        return authService.getAuthenticatedPrincipal();
+        return jwtTokenService.getAuthenticatedPrincipal();
     }
 
     @GetMapping("/forbidden")

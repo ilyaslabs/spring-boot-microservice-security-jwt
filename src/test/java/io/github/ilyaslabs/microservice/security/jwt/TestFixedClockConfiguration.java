@@ -15,11 +15,9 @@ import java.time.ZoneId;
 @TestConfiguration
 public class TestFixedClockConfiguration {
 
-    public static final String TIME = "2020-01-01T10:15:30.00Z";
-
     @Bean
     MutableClock clock() {
-        return new MutableClock(Instant.parse(TIME), ZoneId.of("UTC"));
+        return new MutableClock(Instant.now(), ZoneId.of("UTC"));
     }
 
     public static class MutableClock extends Clock {
