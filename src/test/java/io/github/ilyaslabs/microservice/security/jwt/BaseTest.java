@@ -3,6 +3,7 @@ package io.github.ilyaslabs.microservice.security.jwt;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.List;
@@ -26,7 +27,7 @@ public abstract class BaseTest {
      *
      * @return the generated JWT token as a String
      */
-    public String generateTestToken() {
+    public Jwt generateTestToken() {
 
         return jwtTokenService.generateToken(
                 "testSubject",

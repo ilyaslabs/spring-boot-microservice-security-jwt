@@ -1,16 +1,14 @@
 package io.github.ilyaslabs.microservice.security.jwt;
 
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Import;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.test.annotation.DirtiesContext;
 
+import java.net.MalformedURLException;
+import java.net.URI;
 import java.time.Instant;
-import java.time.LocalDateTime;
-import java.time.ZoneOffset;
-import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Map;
 
@@ -35,16 +33,24 @@ class JwtTokenServiceTest extends BaseTest {
     private TestFixedClockConfiguration.MutableClock clock;
 
     @Test
-    void testGenerateToken() {
+    void testGenerateToken() throws MalformedURLException {
 
-        String token = jwtTokenService.generateToken(
+        var scopes = List.of("ADMIN", "USER");
+
+        Jwt jwt = jwtTokenService.generateToken(
                 "testSubject",
-                "testIssuer",
+                "http://www.testIssuer.com",
                 Map.of("k1", "v1", "k2", "v2"),
-                List.of("ADMIN", "USER")
+                scopes
         );
 
-        assertThat(token).isNotBlank();
+        assertThat(jwt).isNotNull();
+        assertThat(jwt.getTokenValue()).isNotBlank();
+        assertThat(jwt.getSubject()).isEqualTo("testSubject");
+        assertThat(jwt.getIssuer()).isEqualTo(URI.create("http://www.testIssuer.com").toURL());
+        assertThat(jwt.getClaims()).containsEntry("k1", "v1");
+        assertThat(jwt.getClaims()).containsEntry("k2", "v2");
+        assertThat(jwt.getClaimAsString(JwtTokenService.KEY_SCOPE_CLAIM).split(" ")).contains(scopes.toArray(String[]::new));
     }
 
     @Test
@@ -53,31 +59,26 @@ class JwtTokenServiceTest extends BaseTest {
         Instant now = Instant.now();
         clock.set(now);
 
-        String token = generateTestToken();
+        Jwt jwt = generateTestToken();
         String responseString = mockMvc.perform(get("/api/test/context")
-                        .header("Authorization", "Bearer " + token))
+                        .header("Authorization", "Bearer " + jwt.getTokenValue()))
                 .andExpect(status().isOk())
                 .andReturn()
                 .getResponse().getContentAsString();
 
         assertThat(responseString).isNotBlank();
 
-        Map<String, Object> map = new ObjectMapper().readValue(responseString, new TypeReference<Map<String, Object>>() {
-        });
+        assertThat(jwt.getSubject()).isEqualTo("testSubject");
+        assertThat(jwt.getTokenValue()).isNotBlank();
 
-        Map<String, String> claims = (Map<String, String>) map.get("claims");
+        assertThat(jwt.getIssuer()).isEqualTo(URI.create("https://ilyaslabs.github.io").toURL());
+        assertThat(jwt.getClaims()).containsEntry("k1", "v1");
+        assertThat(jwt.getClaims()).containsEntry("k2", "v2");
 
-        assertThat(claims).containsEntry("sub", "testSubject");
-        assertThat(map).containsEntry("tokenValue", token);
-        assertThat(claims).containsEntry("iss", "https://ilyaslabs.github.io");
-        assertThat(claims).containsEntry("k1", "v1");
-        assertThat(claims).containsEntry("k2", "v2");
 
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss'Z'");
-        var expiresAt = LocalDateTime.parse(map.get("expiresAt").toString(), formatter);
-        var expectedExpiryTime = now.plus(jwtProperties.getExpiry(), jwtProperties.getExpiryUnit()).atZone(ZoneOffset.UTC).toLocalDateTime().withNano(0);
+        var expectedExpiryTime = now.plus(jwtProperties.getExpiry(), jwtProperties.getExpiryUnit());
 
-        assertThat(expiresAt.isEqual(expectedExpiryTime)).isTrue();
+        assertThat(jwt.getExpiresAt()).isEqualTo(expectedExpiryTime);
     }
 
     @Test
@@ -85,29 +86,17 @@ class JwtTokenServiceTest extends BaseTest {
         var now = Instant.now();
         clock.set(now);
 
-        String token = jwtTokenService.generateRefreshToken("test", "https://ilyaslabs.github.io", null, null);
+        Jwt jwt = jwtTokenService.generateRefreshToken("test", "https://ilyaslabs.github.io", null, null);
 
-        String responseString = mockMvc.perform(get("/api/test/context")
-                        .header("Authorization", "Bearer " + token))
-                .andExpect(status().isOk())
-                .andReturn()
-                .getResponse().getContentAsString();
 
-        assertThat(responseString).isNotBlank();
+        assertThat(jwt).isNotNull();
+        assertThat(jwt.getSubject()).isEqualTo("test");
+        assertThat(jwt.getTokenValue()).isNotBlank();
+        assertThat(jwt.getIssuer()).isEqualTo(URI.create("https://ilyaslabs.github.io").toURL());
+        assertThat(jwt.getClaims()).containsEntry(JwtTokenService.KEY_SCOPE_CLAIM, JwtTokenService.SCOPE_REFRESH_TOKEN);
 
-        Map<String, Object> map = new ObjectMapper().readValue(responseString, new TypeReference<Map<String, Object>>() {
-        });
-
-        Map<String, String> claims = (Map<String, String>) map.get("claims");
-
-        String scope = claims.get(JwtTokenService.KEY_SCOPE_CLAIM);
-
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss'Z'");
-        var expiresAt = LocalDateTime.parse(map.get("expiresAt").toString(), formatter);
-        var expectedExpiryTime = now.plus(jwtProperties.getRefreshExpiry(), jwtProperties.getRefreshExpiryUnit()).atZone(ZoneOffset.UTC).toLocalDateTime().withNano(0);
-
-        assertThat(scope).isEqualTo(JwtTokenService.SCOPE_REFRESH_TOKEN);
-        assertThat(expiresAt.isEqual(expectedExpiryTime)).isTrue();
+        var expectedExpiryTime = now.plus(jwtProperties.getRefreshExpiry(), jwtProperties.getRefreshExpiryUnit());
+        assertThat(jwt.getExpiresAt()).isEqualTo(expectedExpiryTime);
     }
 
     @Test
@@ -115,23 +104,16 @@ class JwtTokenServiceTest extends BaseTest {
         var now = Instant.now();
         clock.set(now);
 
-        String token = jwtTokenService.generateRefreshToken("test", "https://ilyaslabs.github.io", null, List.of("USER"));
+        Jwt jwt = jwtTokenService.generateRefreshToken("test", "https://ilyaslabs.github.io", null, List.of("USER"));
 
-        String responseString = mockMvc.perform(get("/api/test/context")
-                        .header("Authorization", "Bearer " + token))
-                .andExpect(status().isOk())
-                .andReturn()
-                .getResponse().getContentAsString();
+        assertThat(jwt).isNotNull();
+        assertThat(jwt.getSubject()).isEqualTo("test");
+        assertThat(jwt.getTokenValue()).isNotBlank();
+        assertThat(jwt.getIssuer()).isEqualTo(URI.create("https://ilyaslabs.github.io").toURL());
+        assertThat(jwt.getClaimAsString(JwtTokenService.KEY_SCOPE_CLAIM).split(" ")).contains(List.of(JwtTokenService.SCOPE_REFRESH_TOKEN, "USER").toArray(String[]::new));
 
-        assertThat(responseString).isNotBlank();
-
-        Map<String, Object> map = new ObjectMapper().readValue(responseString, new TypeReference<Map<String, Object>>() {
-        });
-
-        Map<String, String> claims = (Map<String, String>) map.get("claims");
-        String scope = claims.get(JwtTokenService.KEY_SCOPE_CLAIM);
-
-        assertThat(scope).contains(JwtTokenService.SCOPE_REFRESH_TOKEN, "USER");
+        var expectedExpiryTime = now.plus(jwtProperties.getRefreshExpiry(), jwtProperties.getRefreshExpiryUnit());
+        assertThat(jwt.getExpiresAt()).isEqualTo(expectedExpiryTime);
     }
 
     @Test
@@ -139,9 +121,9 @@ class JwtTokenServiceTest extends BaseTest {
         var now = Instant.now();
         clock.set(now);
 
-        String token = generateTestToken();
+        Jwt jwt = generateTestToken();
         mockMvc.perform(get("/api/test/forbidden")
-                        .header("Authorization", "Bearer " + token))
+                        .header("Authorization", "Bearer " + jwt.getTokenValue()))
                 .andExpect(status().isForbidden());
     }
 

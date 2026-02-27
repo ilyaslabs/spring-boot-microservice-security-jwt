@@ -51,15 +51,14 @@ public class JwtTokenService {
      * @param expiry the expiry after now
      * @return the generated JWT token as a string
      */
-    public String generateToken(
+    public Jwt generateToken(
             String subject,
             String issuer,
             Map<String, String> claims,
             List<String> scopes,
             Duration expiry) {
         return encoder
-                .encode(JwtEncoderParameters.from(buildClaims(subject, issuer, claims, scopes, expiry)))
-                .getTokenValue();
+                .encode(JwtEncoderParameters.from(buildClaims(subject, issuer, claims, scopes, expiry)));
     }
 
     /**
@@ -70,7 +69,7 @@ public class JwtTokenService {
      * @param scopes the scopes associated with the token
      * @return the generated JWT token as a string
      */
-    public String generateToken(
+    public Jwt generateToken(
             String subject,
             String issuer,
             Map<String, String> claims,
@@ -86,7 +85,7 @@ public class JwtTokenService {
      * @param scopes the scopes associated with the token, if null or empty, only REFRESH_TOKEN scope will be added
      * @return the generated refresh JWT token as a string
      */
-    public String generateRefreshToken(
+    public Jwt generateRefreshToken(
             String subject,
             String issuer,
             Map<String, String> claims,
