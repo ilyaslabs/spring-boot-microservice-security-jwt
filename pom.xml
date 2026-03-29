@@ -24,7 +24,7 @@
         <maven-javadoc-plugin.version>3.7.0</maven-javadoc-plugin.version>
         <maven-gpg-plugin.version>3.2.3</maven-gpg-plugin.version>
         <central-publishing-maven-plugin.version>0.8.0</central-publishing-maven-plugin.version>
-        <ilyaslabs-spring-boot-microservice.version>3.1.1</ilyaslabs-spring-boot-microservice.version>
+        <ilyaslabs-spring-boot-microservice.version>3.2.0</ilyaslabs-spring-boot-microservice.version>
     </properties>
 
     <url>https://github.com/ilyaslabs/spring-boot-microservice-security-jwt</url>
