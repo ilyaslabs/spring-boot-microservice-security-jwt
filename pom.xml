@@ -5,7 +5,7 @@
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>4.0.3</version>
+		<version>4.0.5</version>
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 
@@ -24,7 +24,7 @@
         <maven-javadoc-plugin.version>3.7.0</maven-javadoc-plugin.version>
         <maven-gpg-plugin.version>3.2.3</maven-gpg-plugin.version>
         <central-publishing-maven-plugin.version>0.8.0</central-publishing-maven-plugin.version>
-        <ilyaslabs-spring-boot-microservice.version>3.2.0</ilyaslabs-spring-boot-microservice.version>
+        <ilyaslabs-spring-boot-microservice.version>3.2.2</ilyaslabs-spring-boot-microservice.version>
     </properties>
 
     <url>https://github.com/ilyaslabs/spring-boot-microservice-security-jwt</url>
